@@ -1,5 +1,5 @@
 {
-  "name": "core",
+  "name": "@xxx/core",
   "version": "0.0.2",
   "description": "> TODO: description",
   "author": "lee <eric_leer@163.com>",
@@ -21,7 +21,7 @@
     "test": "echo \"Run test from core\""
   },
   "dependencies": {
-    "@xxx/utils": "^0.0.0",
+    "@xxx/utils": "^0.0.3",
     "axios": "^0.27.2",
     "fetch": "^1.1.0"
   }

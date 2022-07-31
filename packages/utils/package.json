@@ -23,7 +23,8 @@
     "axios": "^0.27.2",
     "fetch": "^1.1.0",
     "jquery": "^3.6.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "marked": "^4.0.18"
   },
   "gitHead": "4fcb96a88450a2d5ed5ec54a201c5f9e9ea7b62d"
 }
