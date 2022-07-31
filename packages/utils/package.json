@@ -24,5 +24,6 @@
     "fetch": "^1.1.0",
     "jquery": "^3.6.0",
     "lodash": "^4.17.21"
-  }
+  },
+  "gitHead": "4fcb96a88450a2d5ed5ec54a201c5f9e9ea7b62d"
 }
