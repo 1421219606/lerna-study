@@ -23,6 +23,7 @@
   "dependencies": {
     "@xxx/utils": "^0.0.5",
     "axios": "^0.27.2",
-    "fetch": "^1.1.0"
+    "fetch": "^1.1.0",
+    "koa": "^2.13.4"
   }
 }
