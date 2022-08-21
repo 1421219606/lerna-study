@@ -1,48 +1,52 @@
-(async () => {
-  const glob = (await import("glob")).default
-  const inquirer = (await import("inquirer")).default
-  const fs = (await import("fs-extra")).default
-  const handlebars = (await import("handlebars")).default
-  const {exec}  = (await import("shelljs")).default
-  const path = await import("path")
-  const cwd = process.cwd()
+const glob = require('glob');
+const inquirer = require('inquirer');
+const fs = require('fs-extra');
+const execa = require('execa');
+const cwd = process.cwd();
+const shell = require('shelljs');
 
-  const getPackagePath = () => {
-    const packagePaths = glob.sync(path.join(process.cwd(), "packages/*"))
-    console.log({ packagePaths })
-    return packagePaths.map((item) => item.replace(process.cwd() + "/", ""))
-  }
-
-  const choosePackage = async (packages) => {
-    console.log(packages)
-    const answer = await inquirer.prompt({
-      type: "checkbox",
-      name: "packages",
-      message: "选择你要发布的包",
-      choices: [...packages],
-    })
-    return answer
-  }
-
-  const reWriteLerna = (packages) => {
-    const jsonContent = fs.readFileSync(`${cwd}/lerna-template.txt`, "utf-8")
-    const jsonResult = handlebars.compile(jsonContent)(packages)
-    fs.writeFileSync(`${cwd}/lerna.json`, jsonResult)
-  }
-
-  const publish = async () => {
-    const packages = getPackagePath()
-    const publishPackages = await choosePackage(packages)
-    if (publishPackages.packages.length !== 0) {
-      reWriteLerna(publishPackages)
-      exec("lerna publish", {
-        stdio: "inherit",
+async function publish() {
+  try {
+    const { packages } = await inquirer.prompt({
+      type: 'checkbox',
+      name: 'packages',
+      message: '选择你要发布的包',
+      choices: glob.sync('packages/*'),
+    });
+    if (packages.length) {
+      const tpl = {
+        changelog: {
+          labels: {
+            'pr(enhancement)': ':rocket: Enhancement',
+            'pr(bug)': ':bug: Bug Fix',
+            'pr(documentation)': ':book: Documentation',
+            'pr(dependency)': ':deciduous_tree: Dependency',
+            'pr(chore)': ':turtle: Chore',
+          },
+          repo: 'umijs/father-doc',
+          cacheDir: '.changelog',
+        },
+        packages,
+        command: {
+          version: {
+            exact: true,
+          },
+        },
+        npmClient: 'yarn',
+        version: 'independent',
+      };
+      fs.writeFileSync(`${cwd}/lerna.json`, JSON.stringify(tpl, null, 4));
+      shell.exec('git add lerna.json');
+      shell.exec('git commit -m "feat: change lerna.json"');
+      execa.commandSync('lerna publish', {
+        stdio: 'inherit',
         cwd,
-      })
+      });
     } else {
-      console.log("没有选择包")
+      console.log('未选择包');
     }
+  } catch (error) {
+    console.log(error);
   }
-
-  publish()
-})()
+}
+publish();
